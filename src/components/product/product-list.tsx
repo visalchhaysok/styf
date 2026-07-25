@@ -46,7 +46,7 @@ export default function ProductList() {
             key={product.id}
             product={product}
           />
-        ))};
+        ))}
       </div>
     </section>
   )
