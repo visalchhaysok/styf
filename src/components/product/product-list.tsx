@@ -20,7 +20,7 @@ export default function ProductList() {
   if (loading) {
     return (
       <section className="mx-auto max-w-3xl px-5 py-6">
-        <p className="text-center text-muted-foreground">Loading collection...</p>
+        <p className="text-center text-muted-foreground">Fail to load, please refresh the page...</p>
       </section>
     )
   }

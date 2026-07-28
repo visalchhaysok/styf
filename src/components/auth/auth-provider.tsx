@@ -5,7 +5,7 @@ import { User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type AuthContextValue = {
-    user: User | null;
+    user: User | null; // supabase's {User} object
     isLoading: boolean;
     signOut: () => Promise<void>;
 };
@@ -35,7 +35,7 @@ export default function AuthProvider(
         });
 
         return () => subscription.unsubscribe();
-    }), [];
+    }, []);
 
     const signOut = async () => {
         const supabase = createClient();
