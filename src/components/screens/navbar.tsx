@@ -4,9 +4,15 @@ import Link from 'next/link'
 import { User } from 'lucide-react'
 import { useCart } from '@/components/cart/cart-provider'
 import { CartSidebar } from '@/components/cart/cart-sidebar'
+import { useAuth } from '../auth/auth-provider';
 
 export function Navbar() {
-  const { count, openCart } = useCart()
+  const { count, openCart } = useCart();
+  const { user, isLoading, signOut } = useAuth();
+  // useAuth() returns AuthContextValue
+
+  const displayName = user?.user_metadata?.username || user?.email || 'Guest';
+  console.log('User:', user);
 
   return (
     <>
@@ -14,7 +20,24 @@ export function Navbar() {
         <nav className="mx-auto grid max-w-3xl grid-cols-3 items-center px-5 py-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <User className="size-4" aria-hidden="true" />
-            <span>Guest</span>
+            {
+              isLoading ? (
+                <span>...</span>
+              ) : user ? (
+                <div className="flex items-center gap-2">
+                  <span className="max-w-25 truncate">{displayName}</span>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="text-xs underline hover:text-foreground"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <Link href="/login">Guest</Link>
+              )
+            }
           </div>
 
           <Link

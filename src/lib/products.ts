@@ -22,8 +22,6 @@ export async function getProducts(): Promise<Product[]> {
     return [];
   }
 
-  console.log(data);
-
   return (data || []).map((row) => ({
     id: row.id,
     name: row.name,

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/components/cart/cart-provider'
 import type { Product } from '@/lib/products'
+import { viewport } from '../../app/layout';
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem, openCart } = useCart()
@@ -16,7 +17,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
       <Link href={`/product/${product.id}`} className="block">
-        <div className="relative aspect-4/5 w-full overflow-hidden bg-muted">
+        <div className='relative aspect-4/5 overflow-hidden bg-muted w-full'>
           <Image
             loading='lazy'
             src={product.image_url || '/placeholder.svg'}
@@ -30,9 +31,6 @@ export function ProductCard({ product }: { product: Product }) {
 
       <div className="flex flex-col gap-4 p-6">
         <Link href={`/product/${product.id}`} className="flex flex-col gap-1">
-          {/* <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            {product.category}
-          </span> */}
           <h3 className="font-serif text-xl text-foreground">{product.name}</h3>
           <p className="text-base text-muted-foreground">${product.price.toLocaleString()}</p>
         </Link>

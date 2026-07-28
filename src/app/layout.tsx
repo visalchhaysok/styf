@@ -4,6 +4,7 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import { CartProvider } from '@/components/cart/cart-provider'
 import './globals.css'
 import LoadingScreen from '../components/screens/LoadingScreen';
+import AuthProvider from '../components/auth/auth-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -40,7 +41,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable} bg-background`}>
       <body className="font-sans antialiased">
         <LoadingScreen />
-        <CartProvider>{children}</CartProvider>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

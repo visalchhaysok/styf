@@ -13,9 +13,9 @@ export default function LoadingScreen() {
         setProgress(0)
 
         const milestones = [
-            { target: 25, delay: 200 },
+            { target: 24, delay: 200 },
             // { target: 50, delay: 500 },
-            { target: 75, delay: 200 },
+            { target: 66, delay: 200 },
             { target: 100, delay: 600 },
         ]
 
