@@ -9,10 +9,8 @@ import { useAuth } from '../auth/auth-provider';
 export function Navbar() {
   const { count, openCart } = useCart();
   const { user, isLoading, signOut } = useAuth();
-  // useAuth() returns AuthContextValue
 
   const displayName = user?.user_metadata?.username || user?.email || 'Guest';
-  console.log('User:', user);
 
   return (
     <>

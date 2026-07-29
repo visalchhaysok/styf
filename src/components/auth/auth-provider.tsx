@@ -5,14 +5,12 @@ import { User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type AuthContextValue = {
-    user: User | null; // supabase's {User} object
+    user: User | null;
     isLoading: boolean;
     signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-// global data - i am guessing we are throwing auth context in every single component
-// we wrap this context around other components
 
 export default function AuthProvider(
     { children }: { children: ReactNode }

@@ -2,7 +2,6 @@ import { Navbar } from '@/components/screens/navbar'
 import { Hero } from '@/components/screens/hero'
 import ProductList from '@/components/product/product-list'
 import { Footer } from '@/components/screens/footer'
-import { stripe } from '../lib/stripe';
 
 export default function HomePage() {
 

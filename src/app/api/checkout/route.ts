@@ -7,7 +7,6 @@ export async function POST(
     try {
         const body = await request.json();
         const { items } = body;
-        // we expect body.items to exists
 
         if (!items || items.length === 0) {
             return NextResponse.json(
@@ -16,7 +15,7 @@ export async function POST(
             );
         }
 
-        const lineItems = items.map((item: any) => ({ // array that holds multiple objects
+        const lineItems = items.map((item: any) => ({
             price_data: {
                 currency: 'usd',
                 product_data: {
@@ -27,7 +26,7 @@ export async function POST(
                         size: item.size,
                     }
                 },
-                unit_amount: item.price * 100, // stripe uses cents
+                unit_amount: item.price * 100,
             },
             quantity: item.quantity,
         }));
@@ -37,12 +36,8 @@ export async function POST(
             line_items: lineItems,
             mode: 'payment',
             success_url: `${request.nextUrl.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-            // -> hey stripe give me a success url like this: (stripe expects {CHECKOUT_SESSION_ID})
             cancel_url: `${request.nextUrl.origin}/`,
-            // hey stripe here if fails sends cancel_url with this value
         });
-
-        console.log(`PaymentURL:`, session.url);
 
         return NextResponse.json(
             {

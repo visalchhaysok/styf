@@ -1,5 +1,4 @@
 import { supabase } from "./supabase";
-
 export type Product = {
   id: string;
   name: string;
@@ -37,6 +36,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function getProduct(id: string): Promise<Product | null> {
+
   const { data, error } = await supabase
     .from('products')
     .select('*')

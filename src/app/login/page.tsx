@@ -19,14 +19,11 @@ export default function LoginPage() {
         e.preventDefault();
         setError('');
         setIsLoading(true);
-        // while form is running show loading page
 
         const supabase = createClient();
 
         try {
             if (isSignUp) {
-                // isSignUp was set up for button ui
-                // not anything special
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
@@ -36,7 +33,6 @@ export default function LoginPage() {
                 });
 
                 if (error) throw error;
-                // => fires signUp and logIn on immediately after
                 const { error: signInError } = await supabase.auth.signInWithPassword({
                     email,
                     password,
@@ -130,7 +126,7 @@ export default function LoginPage() {
 
                     <button
                         type="submit"
-                        disabled={isLoading} // once click loading=true
+                        disabled={isLoading}
                         className="w-full rounded-full bg-primary py-3 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
                     >
                         {isLoading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
@@ -142,7 +138,7 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => {
-                            setIsSignUp(!isSignUp) // this is how the flow changes
+                            setIsSignUp(!isSignUp)
                             setError('')
                         }}
                         className="text-foreground underline hover:text-primary"
