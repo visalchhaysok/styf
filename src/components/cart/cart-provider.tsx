@@ -127,7 +127,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                         }
                         return
 
-                    } // User + no Cart
+                    }
                     console.log('User exists but no cart running')
                     const { data: claimedUserCart, error: claimedUserCartError } = await supabase
                         .from('carts')
@@ -135,7 +135,6 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                         .eq('session_id', newSessionId)
                         .select('id, cart_items(*, products(id, name, price, image_url))')
                         .maybeSingle()
-                    // update  + select, when failed sends null
 
                     if (claimedUserCartError) throw claimedUserCartError
 
@@ -208,7 +207,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                     console.warn('Unable to load cart, please retry..', error)
                     localStorage.setItem(SESSION_KEY, refreshedCartId)
                     setCartId(refreshedCartId)
-                    router.refresh() //! must deal with this properly
+                    router.refresh()
                     return
                 } catch (error) {
                     throw new Error('Error Cart Provider')

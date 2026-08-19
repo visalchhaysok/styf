@@ -9,6 +9,7 @@ import {
     CreditCard,
 } from "lucide-react"
 import { useAuth } from "@/components/auth/auth-provider"
+import { metadata } from '../../layout'
 
 const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, active: true },
@@ -26,7 +27,7 @@ export default function Sidebar({
     onClose: () => void
 }) {
 
-    const { signOut } = useAuth()
+    const { user, signOut } = useAuth()
 
     return (
         <>
@@ -53,9 +54,9 @@ export default function Sidebar({
                         />
 
                         <div>
-                            <p className="text-sm font-medium">Alex Morgan</p>
+                            <p className="text-base font-medium">{user?.user_metadata.username || user?.email!.split('@')[0] || 'Guest'}</p>
                             <p className="mt-1 text-xs text-[#a8a094]">
-                                alex@styf.co
+                                {user?.email || 'guest@email.com'}
                             </p>
                         </div>
                     </div>
@@ -109,7 +110,7 @@ export default function Sidebar({
 
                     <button
                         className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-[#c39a92] hover:bg-[#4a302c] hover:text-[#f1c6bf]"
-                    onClick={signOut}
+                        onClick={signOut}
                     >
                         <LogOut size={17} strokeWidth={1.7} />
                         Logout

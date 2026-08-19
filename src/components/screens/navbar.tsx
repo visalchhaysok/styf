@@ -1,18 +1,16 @@
 'use client'
 
-import Link from 'next/link';
-import { User, ShoppingCart } from 'lucide-react';
-import { useCart } from '@/components/cart/cart-provider';
-import { CartSidebar } from '@/components/cart/cart-sidebar';
-import { useAuth } from '../auth/auth-provider';
+import Link from 'next/link'
+import { User, ShoppingCart } from 'lucide-react'
+import { useCart } from '@/components/cart/cart-provider'
+import { CartSidebar } from '@/components/cart/cart-sidebar'
+import { useAuth } from '../auth/auth-provider'
 
 export function Navbar() {
-  const { count, openCart } = useCart();
-  const { user, isLoading } = useAuth();
+  const { count, openCart } = useCart()
+  const { user, isLoading } = useAuth()
 
-  const displayName = user?.user_metadata?.username || user?.email || 'Guest';
-  // console.log('User:', user); // !debug
-  // console.log(`Metadata: `, JSON.stringify(user?.user_metadata, null, 2));
+  const displayName = user?.user_metadata?.username || user?.email || 'Guest'
 
   return (
     <>
@@ -26,15 +24,12 @@ export function Navbar() {
               ) : user ? (
                 <div className="flex items-center gap-2">
 
-                  {/* Added link into span */}
                   <span className="max-w-25 truncate"
                   >
                     <Link href={`/dashboard`}>
                       {displayName}
                     </Link>
                   </span>
-
-                  {/* // Update: Remove Sign Out text */}
 
                 </div>
               ) : (

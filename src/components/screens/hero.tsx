@@ -2,19 +2,20 @@ import Image from 'next/image'
 
 export function Hero() {
   return (
-    <section className="mx-auto max-w-3xl px-5 pb-6 pt-12 text-center">
-      <p className="mb-6 text-xs uppercase tracking-[0.35em] text-muted-foreground">
+    <section className="mx-auto max-w-3xl px-5 pb-6 pt-8 text-center md:pb-6 md:pt-12">
+      <p className="mb-4 text-xs uppercase tracking-[0.35em] text-muted-foreground md:mb-6">
         Stylish Flow
       </p>
-      <h1 className="text-balance font-serif text-5xl font-medium leading-[1.05] tracking-tight text-foreground sm:text-6xl">
+
+      <h1 className="text-balance font-serif text-4xl font-medium leading-[1.05] tracking-tight text-foreground md:text-5xl">
         Effortless Style
       </h1>
-      <p className="mx-auto mt-6 max-w-md text-pretty leading-relaxed text-muted-foreground">
-        Considered essentials in soft, natural tones — pieces designed to move
-        quietly through every season.
+
+      <p className="mx-auto mt-4 max-w-md text-xs leading-relaxed md:mt-6 md:text-base text-gray-400">
+        Designed to move quietly through every season.
       </p>
 
-      <div className="relative mt-10 aspect-4/5 w-full overflow-hidden rounded-2xl bg-muted">
+      <div className="relative mt-6 aspect-3/2 w-full overflow-hidden rounded-2xl bg-muted md:mt-10 shadow-2xl">
         <Image
           src="/hero.png"
           alt="Model wearing flowing neutral STYF clothing"

@@ -16,6 +16,8 @@ export default function SuccessContent() {
 
     useEffect(() => {
 
+        if (authLoading) return
+
         const verifyOrderId = async () => {
 
             try {
@@ -44,13 +46,13 @@ export default function SuccessContent() {
             } catch (error) {
                 setSessionId(null)
                 setStatus('error')
-                console.error(`Error:`, error) //!debug
+                return
             }
         }
 
         verifyOrderId()
 
-    }, [sessionId, orderStatus])
+    }, [authLoading, sessionId, orderStatus])
 
     if (status === 'error') {
         return (

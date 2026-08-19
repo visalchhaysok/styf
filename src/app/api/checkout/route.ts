@@ -17,8 +17,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     error: '401 | Unauthorized ',
-                    message: authError ? authError.message : 'Unauthorized'
-                    //!debug only
+                    message: 'Unauthorized User',
                 },
                 { status: 401 }
             )
@@ -29,8 +28,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     error: '400 | Bad Request',
-                    message: `Invalid Cart: ${validCartId.error.message}`,
-                }, //!debug
+                    message: `Invalid Or Empty Cart`,
+                },
                 { status: 400 }
             )
         }
@@ -48,8 +47,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     error: '400 | Bad Request',
-                    message: cartError ? cartError.message : 'Invalid or Empty cart',
-                    //! debug
+                    message: 'Invalid or Empty cart',
                 },
                 { status: 400 }
             )
@@ -122,8 +120,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
             {
                 error: '500 | Internal Server Error',
-                message: `Error: ${error}`, //! debug
-                // url: 'Error page url to redirect back home'
+                message: `Error failed to create order, retry or contact support`
             },
             { status: 500 }
         )

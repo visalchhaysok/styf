@@ -1,12 +1,12 @@
 
-import { createServerClient } from '@supabase/ssr';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
     let response = NextResponse.next(
         { request: { headers: request.headers } }
-    );
+    )
 
     try {
         const supabase = createServerClient(
@@ -22,35 +22,33 @@ export async function proxy(request: NextRequest) {
                             ({ name, value, options }) => {
                                 request.cookies.set(name, value)
                                 response.cookies.set(name, value, options)
-                                // name, value contains info, options contain more metadata
                             },
                         )
                     },
                 },
             },
-        );
+        )
 
-        const { data: { user }, error } = await supabase.auth.getUser();
-        // get user from supabase cookies interface
+        const { data: { user }, error } = await supabase.auth.getUser()
 
         if (error && error.name !== 'AuthSessionMissingError') {
-            console.error(`AuthError:`, error);
-            return;
+            console.error(`AuthError:`, error)
+            return
         }
 
         if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            return NextResponse.redirect(new URL('/login', request.url))
         }
 
     } catch (error: any) {
-        console.error('Middleware Error:', error);
-        return;
+        console.error('Middleware Error:', error)
+        return
     }
 
-    return response;
+    return response
 
 }
 
 export const config = {
     matcher: ['/admin/:path*', '/orders/:path*'],
-};
+}

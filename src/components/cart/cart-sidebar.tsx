@@ -13,7 +13,6 @@ export function CartSidebar() {
   const startX = useRef<number | null>(null)
   const router = useRouter()
 
-  // Lock body scroll while the sidebar is open
   useEffect(() => {
     if (isOpen) {
       const original = document.body.style.overflow
@@ -24,7 +23,6 @@ export function CartSidebar() {
     }
   }, [isOpen])
 
-  // Close on Escape
   useEffect(() => {
     if (!isOpen) return
     const onKey = (e: KeyboardEvent) => {
@@ -73,8 +71,6 @@ export function CartSidebar() {
 
       if (data.url) {
         window.location.href = data.url
-        // this is how the button opens stripe's page
-        // post response.url sends the stripe URL
       }
     } catch (err: any) {
       alert(err.message || 'Something went wrong. Try again.')
@@ -88,7 +84,6 @@ export function CartSidebar() {
       className={`fixed inset-0 z-50 ${isOpen ? '' : 'pointer-events-none'}`}
       aria-hidden={!isOpen}
     >
-      {/* Backdrop */}
       <button
         type="button"
         aria-label="Close cart"
@@ -97,7 +92,6 @@ export function CartSidebar() {
           }`}
       />
 
-      {/* Panel */}
       <aside
         role="dialog"
         aria-label="Shopping cart"
@@ -124,7 +118,6 @@ export function CartSidebar() {
           </button>
         </div>
 
-        {/* Items (scrollable) */}
         <div className="flex-1 overflow-y-auto px-5">
           {items.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-2 py-16 text-center">
@@ -207,7 +200,6 @@ export function CartSidebar() {
           )}
         </div>
 
-        {/* Sticky footer */}
         <div className="border-t border-border bg-sidebar px-5 pb-6 pt-4">
           <div className="mb-4 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Subtotal:</span>

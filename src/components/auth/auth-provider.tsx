@@ -5,7 +5,7 @@ import { User } from "@supabase/supabase-js"
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
 
 type AuthContextValue = {
-    user: User | null // supabase's {User} object
+    user: User | null
     isLoading: boolean
     signOut: () => Promise<void>
 }
@@ -19,7 +19,6 @@ export default function AuthProvider(
     const [isLoading, setIsLoading] = useState(true)
 
     const supabase = useMemo(() => createClient(), [])
-    //  meaning it never run any code because [] is empty
 
     useEffect(() => {
 
@@ -30,7 +29,7 @@ export default function AuthProvider(
             .then(({ data: { user }, error }) => {
                 if (!isMounted) return
                 if (error && error.name !== 'AuthSessionMissingError') {
-                    console.error('Error fetching user:', error) //! for debug!
+                    console.error('Error fetching user:', error)
                     setUser(null)
                 } else {
                     setUser(user)
@@ -38,11 +37,10 @@ export default function AuthProvider(
                 setIsLoading(false)
             })
             .catch((error) => {
-                console.error(`Caught error in Effect:`, error) //! debug
+                console.error(`Caught error in Effect:`, error)
                 setIsLoading(false)
             })
 
-        // ? listener fires once?
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             (_event, session) => {
                 if (!isMounted) return
@@ -51,7 +49,7 @@ export default function AuthProvider(
             }
         )
 
-        return (() => { // only runs when unmount/leave page
+        return (() => {
             isMounted = false
             subscription.unsubscribe()
         })
@@ -64,7 +62,7 @@ export default function AuthProvider(
             setUser(null)
 
         } catch (error) {
-            console.error('Sign Out Error:', error) //! debug
+            console.error('Sign Out Error:', error)
             throw error
         } finally {
             setIsLoading(false)
