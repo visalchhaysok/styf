@@ -1,25 +1,26 @@
-import { supabase } from "./supabase";
-
+import { createClient } from "@/lib/supabase/supabase"
 export type Product = {
-  id: string;
-  name: string;
-  price: number;
-  image_url: string;
-  description: string;
-  sizes: string[];
-  in_stock: boolean;
-};
+  id: string
+  name: string
+  price: number
+  image_url: string
+  description: string
+  sizes: string[]
+  in_stock: boolean
+}
 
 export async function getProducts(): Promise<Product[]> {
+
+  const supabase = createClient()
 
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching products:', error);
-    return [];
+    console.error('Error fetching products:', error)
+    return []
   }
 
   return (data || []).map((row) => ({
@@ -32,20 +33,23 @@ export async function getProducts(): Promise<Product[]> {
       ? row.sizes.split(',').map((size: string) => size.trim())
       : [],
     in_stock: row.in_stock ?? true,
-  }));
+  }))
 
 }
 
 export async function getProduct(id: string): Promise<Product | null> {
+
+  const supabase = createClient()
+
   const { data, error } = await supabase
     .from('products')
     .select('*')
     .eq('id', id)
-    .single();
+    .single()
 
   if (error || !data) {
-    console.error('Error fetching products:', error);
-    return null;
+    console.error('Error fetching products:', error)
+    return null
   };
 
   return {
@@ -58,5 +62,5 @@ export async function getProduct(id: string): Promise<Product | null> {
       ? data.sizes.split(',').map((size: string) => size.trim())
       : [],
     in_stock: data.in_stock ?? true,
-  };
+  }
 }

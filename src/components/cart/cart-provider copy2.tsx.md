@@ -12,10 +12,7 @@ import {
 } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { useAuth } from "@/components/auth/auth-provider"
-import { createClient } from "@/lib/supabase/supabase"
-import { useRouter } from "next/navigation"
-import { DBCartItem } from "@/lib/schemas/db/db-types"
-import { User } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase"
 
 export type CartItem = {
     id: string
@@ -27,12 +24,12 @@ export type CartItem = {
     image: string
 }
 
-const mapToCartItem = (dbCartItem: DBCartItem): CartItem => {
+const mapToCartItem = (dbCartItem: any): CartItem => {
     return {
         id: dbCartItem.id,
         size: dbCartItem.size,
         quantity: dbCartItem.quantity,
-        productId: dbCartItem.products.id,
+        productId: dbCartItem.product_id,
         name: dbCartItem.products.name || "Unknown",
         price: dbCartItem.products.price || 0,
         image: dbCartItem.products.image_url || "/placeholder.png",
@@ -44,8 +41,6 @@ const mapToCartItemsList = (dbCartItemList: any): CartItem[] => {
 }
 
 type CartContextValue = {
-    user: User | null,
-    cartId: string
     items: CartItem[]
     count: number
     subtotal: number
@@ -82,19 +77,17 @@ const getSessionId = () => {
 export default function CartProvider({ children }: { children: ReactNode }) {
     const { user, isLoading: authLoading } = useAuth()
     const [items, setItems] = useState<CartItem[]>([])
-    const [cartId, setCartId] = useState<string>("")
+    const [cartId, setCartId] = useState<string | null>(null)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
 
-    const router = useRouter()
-
     const supabase = useMemo(() => createClient(), [])
 
     useEffect(() => {
-        setCartId("")
 
         let isMounted = true
+        console.log('Reading Cart Info...')
 
         if (authLoading) {
             return
@@ -102,120 +95,83 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 
         const loadCart = async () => {
 
-            try {
-                const newSessionId = getSessionId()
+            console.log(`Clearing old session...`)
+            localStorage.removeItem(SESSION_KEY)
 
-                if (user) {
-                    console.log(`Running User + Existing cart`)
+            if (user) {
+                console.log(`Running User + Existing cart`)
 
-                    const { data: userCart, error: userCartError } = await supabase
-                        .from('carts')
-                        .select('id, session_id, cart_items(*, products(id, name, price, image_url, description))')
-                        .eq('user_id', user.id)
-                        .maybeSingle()
+                const { data: userCart, error: userCartError } = await supabase
+                    .from('carts')
+                    .select('id, session_id, cart_items(*, products(name, price, image_url))')
+                    .eq('user_id', user.id)
+                    .maybeSingle()
 
-                    console.log(`${user.email}'s Cart:`, JSON.stringify(userCart, null, 2))
+                console.log(`${user.email}'s Cart:`, JSON.stringify(userCart, null, 2))
 
-                    if (userCartError) throw userCartError
+                if (userCartError) throw userCartError
 
-                    if (userCart) {
-                        if (isMounted) {
-                            console.log(`Successfully fetched user + existing cart`)
-                            localStorage.setItem(SESSION_KEY, userCart.session_id)
-                            setCartId(userCart.id)
-                            setItems(mapToCartItemsList(userCart.cart_items) || [])
-                        }
-                        return
+                if (userCart) {
+                    if (isMounted) {
+                        console.log(`Successfully fetched user + existing cart`)
+                        localStorage.setItem(SESSION_KEY, userCart.session_id)
+                        setCartId(userCart.id)
+                        setItems(mapToCartItemsList(userCart.cart_items) || [])
+                    }
+                    return
 
-                    } // User + no Cart
+                } else { // User + no Cart
                     console.log('User exists but no cart running')
+                    const newSessionId = getSessionId()
+                    // const { data: findUserCart, error: findUserCartError } = await supabase
+                    //     .from('carts')
+                    //     .select('id, cart_items(*, products(name, price, image_url))')
+                    //     .eq('session_id', newSessionId)
+                    //     .maybeSingle()
+
+                    // console.log('Result user + no cart...: ', JSON.stringify(findUserCart, null, 2))
+
+                    // if (findUserCartError) throw findUserCartError
+
+                    // if (findUserCart) {
+                    //     if (isMounted) {
+
+                    console.log('Found User + No Cart, now attaching user to new cart')
+
                     const { data: claimedUserCart, error: claimedUserCartError } = await supabase
                         .from('carts')
                         .update({ user_id: user.id })
                         .eq('session_id', newSessionId)
-                        .select('id, cart_items(*, products(id, name, price, image_url))')
+                        .select('id, cart_items(*, products(name, price, image_url))')
                         .maybeSingle()
-                    // update  + select, when failed sends null
 
                     if (claimedUserCartError) throw claimedUserCartError
 
                     if (claimedUserCart) {
-                        if (isMounted) {
-                            console.log('Attaching user to new cart')
-                            setCartId(claimedUserCart.id)
-                            setItems(mapToCartItemsList(claimedUserCart.cart_items) || [])
-                        }
+                        setCartId(claimedUserCart.id)
+                        setItems(mapToCartItemsList(claimedUserCart.cart_items) || [])
                         return
-
-                    } else {
-                        console.log('Unable to find cart. Creating new cart for user')
-
-                        const { data: newUserCart, error: newUserCartError } = await supabase
-                            .from('carts')
-                            .insert({ user_id: user.id, session_id: newSessionId })
-                            .select('id, session_id,cart_items(*, products(id, name, price, image_url))')
-                            .maybeSingle()
-
-                        if (newUserCartError) throw newUserCartError
-
-                        if (newUserCart) {
-                            if (isMounted) {
-                                setCartId(newUserCart.id)
-                                setItems(mapToCartItemsList(newUserCart.cart_items) || [])
-                            }
-                            return
-                        }
                     }
                 }
+                // return
+                // }
+                // found no cart: null
+                console.log('Unable to find cart. Creating new cart for user')
 
-                console.log('No user found, loading guest cart...:', localStorage.getItem(SESSION_KEY))
-                const { data: guestCart, error: guestCartError } = await supabase
+                const { data: newUserCart, error: newUserCartError } = await supabase
                     .from('carts')
-                    .select('id, session_id, cart_items(*, products(id, name, price, image_url))')
-                    .eq('session_id', newSessionId)
+                    .insert({ user_id: user.id, session_id: newSessionId })
+                    .select('id, cart_items(*, products(name, price, image_url))')
                     .maybeSingle()
 
-                if (guestCartError) throw guestCartError
+                if (newUserCartError) throw newUserCartError
 
-                if (guestCart) {
+                if (newUserCart) {
                     if (isMounted) {
-                        localStorage.setItem(SESSION_KEY, guestCart.session_id)
-                        setCartId(guestCart.id)
-                        setItems(mapToCartItemsList(guestCart.cart_items) || [])
+                        setCartId(newUserCart.id)
+                        setItems(mapToCartItemsList(newUserCart.cart_items) || [])
                     }
                     return
-
-                } else {
-                    const { data: newGuestCart, error: newGuestCartError } = await supabase
-                        .from('carts')
-                        .insert({ session_id: newSessionId })
-                        .select('id, cart_items(*, products(id, name, price, image_url))')
-                        .maybeSingle()
-
-                    if (newGuestCartError) throw newGuestCartError
-
-                    if (newGuestCart) {
-                        if (isMounted) {
-                            setCartId(newGuestCart.id)
-                            setItems(mapToCartItemsList(newGuestCart.cart_items) || [])
-                        }
-                        return
-                    }
-                }
-            } catch (error) {
-                try {
-                    const refreshedCartId = uuidv4()
-                    console.warn('Unable to load cart, please retry..', error)
-                    localStorage.setItem(SESSION_KEY, refreshedCartId)
-                    setCartId(refreshedCartId)
-                    router.refresh() //! must deal with this properly
-                    return
-                } catch (error) {
-                    throw new Error('Error Cart Provider')
-                }
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false)
                 }
             }
         }
@@ -253,7 +209,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                         .from("cart_items")
                         .update({ quantity: existingItem.quantity + 1 })
                         .eq("id", existingItem.id)
-                        .select("*, products(id, name, price, image_url)")
+                        .select("*, products(name, price, image_url)")
                         .single()
 
                     if (updateError) throw updateError
@@ -277,7 +233,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                             size,
                             quantity: 1,
                         })
-                        .select("*, products(id, name, price, image_url)")
+                        .select("*, products(name, price, image_url)")
                         .maybeSingle()
 
                     if (insertError) throw insertError
@@ -294,7 +250,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                 try {
                     const { data, error: refreshCartError } = await supabase
                         .from("carts")
-                        .select("cart_items(*, products(id, name, price, image_url))")
+                        .select("cart_items(*, products(name, price, image_url))")
                         .eq("id", cartId)
                         .maybeSingle()
 
@@ -305,7 +261,6 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 
                     setItems(mapToCartItemsList(data?.cart_items) || [])
                     return
-
                 } catch (refreshCartError) {
                     setError(`Failed to reload Cart, please retry: ${refreshCartError}`)
                     console.error("Line 223 error: ", refreshCartError)
@@ -338,7 +293,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                     .single()
 
                 if (errorRemove) {
-                    console.error("366 Failed to removed item: ", errorRemove.message)
+                    console.error("Failed to removed item: ", errorRemove.message)
                     return
                 }
 
@@ -408,8 +363,8 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                 )
 
                 console.log(`Updated Cart:`, updatedItem)
-                return
 
+                return
             } catch (caughtError) {
                 setError(`Failed to update quantity: ${caughtError}`)
                 console.error(`Line 278, Update Quantity failed: `, caughtError)
@@ -457,8 +412,6 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         )
 
         return {
-            user,
-            cartId,
             items,
             count,
             subtotal,
@@ -473,12 +426,9 @@ export default function CartProvider({ children }: { children: ReactNode }) {
             clearCart,
         }
     }, [
-        user,
-        cartId,
         items,
         isOpen,
         isLoading,
-        error,
         openCart,
         closeCart,
         addItem,

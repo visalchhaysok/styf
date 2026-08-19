@@ -4,12 +4,14 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { Minus, Plus, X } from 'lucide-react'
 import { useCart } from '@/components/cart/cart-provider'
+import { useRouter } from 'next/navigation'
 
 export function CartSidebar() {
-  const { items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
+  const { user, cartId, items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
   const [dragX, setDragX] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const startX = useRef<number | null>(null)
+  const router = useRouter()
 
   // Lock body scroll while the sidebar is open
   useEffect(() => {
@@ -58,8 +60,10 @@ export function CartSidebar() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ cartId }),
       })
+
+      console.log('CartID (from sidebar):', cartId)
 
       const data = await res.json()
 
@@ -132,7 +136,7 @@ export function CartSidebar() {
           ) : (
             <ul className="divide-y divide-border">
               {items.map((item) => (
-                <li key={`${item.id}-${item.size}`} className="flex gap-4 py-5">
+                <li key={`${item.id}-${item.productId}-${item.size}`} className="flex gap-4 py-5">
                   <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <Image
                       src={item.image || '/placeholder.svg'}
@@ -153,7 +157,7 @@ export function CartSidebar() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => removeItem(item.id, item.size)}
+                        onClick={() => removeItem(item.productId, item.size)}
                         aria-label={`Remove ${item.name}`}
                         className="text-muted-foreground transition-colors hover:text-foreground"
                       >
@@ -171,7 +175,7 @@ export function CartSidebar() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateQuantity(item.id, item.size, item.quantity - 1)
+                            updateQuantity(item.productId, item.size, item.quantity - 1)
                           }
                           aria-label="Decrease quantity"
                           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -184,7 +188,7 @@ export function CartSidebar() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateQuantity(item.id, item.size, item.quantity + 1)
+                            updateQuantity(item.productId, item.size, item.quantity + 1)
                           }
                           aria-label="Increase quantity"
                           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -211,12 +215,26 @@ export function CartSidebar() {
               ${subtotal.toLocaleString()}
             </span>
           </div>
+
           <button
             type="button"
-            onClick={handleCheckout}
+            onClick={() => {
+              if (!user) {
+                router.push('/login')
+              } else {
+                handleCheckout()
+              }
+            }}
             disabled={items.length === 0 || isLoading}
-            className="w-full rounded-full bg-primary py-4 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-4 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            aria-busy={isLoading}
           >
+            {isLoading && (
+              <svg className="animate-spin h-5 w-5 text-current" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            )}
             {isLoading ? 'Processing...' : 'Place Order'}
           </button>
         </div>

@@ -1,7 +1,6 @@
-'use client'
+'use client';
 
-import { useAuth } from "@/components/auth/auth-provider"
-import { SignUpSchema } from "@/lib/schemas/validation/auth"
+import { useAuth } from "@/components/auth/auth-provider";
 import { createClient } from "@/lib/supabase/supabase"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -9,93 +8,65 @@ import { useEffect, useMemo, useState } from "react"
 
 export default function LoginPage() {
 
-    const { user, isLoading: authLoading } = useAuth()
-
-    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [username, setUsername] = useState('')
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const router = useRouter()
+    const router = useRouter();
 
-    const supabase = useMemo(() => createClient(), [])
-
-    useEffect(() => {
-        setIsLoading(true)
-
-        if (authLoading) {
-            console.warn(`Loading user content...`)
-            return
-        }
-
-        if (user) {
-            setIsLoading(false)
-            router.push('/dashboard')
-            return
-        }
-
-        setIsLoading(false)
-        return
-
-    }, [authLoading])
+    const supabase = useMemo(() => createClient(), []);
 
     const handleSubmit = async (e: React.SubmitEvent) => {
-        e.preventDefault()
-        setError('')
-        setIsLoading(true)
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
+        // while form is running show loading page
 
         try {
-            const result = SignUpSchema.safeParse({
-                username,
-                email,
-                password,
-            })
-
-            if (!result.success) {
-                setError(result.error.message)
-                return
-            }
-
             if (isSignUp) {
+                // isSignUp was set up for button ui
+                // not anything special
                 const { error } = await supabase.auth.signUp({
-                    email: result.data.email,
-                    password: result.data.password,
+                    email,
+                    password,
                     options: {
-                        data: { username: result.data.username },
+                        data: { username },
                     },
-                })
+                });
 
-                if (error) throw error
+                if (error) throw error;
                 // => fires signUp and logIn on immediately after
                 const { error: signInError } = await supabase.auth.signInWithPassword({
-                    email: result.data.email,
-                    password: result.data.password,
-                })
-                if (signInError) throw signInError
+                    email,
+                    password,
+                });
+                if (signInError) throw signInError;
 
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
-                })
-                if (error) throw error
+                });
+                if (error) throw error;
             }
-            router.push('/')
-            router.refresh()
+            router.push('/');
+            router.refresh();
         }
 
         catch (error: any) {
-            setError(error.message || 'Something went wrong')
+            setError(error.message || 'Something went wrong');
+            return;
         }
 
         finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center px-5">
+        < div className="flex min-h-screen flex-col items-center justify-center px-5" >
             <div className="w-full max-w-sm space-y-6">
                 <div className="text-center">
                     <h1 className="font-serif text-2xl text-foreground">
@@ -164,7 +135,7 @@ export default function LoginPage() {
                         disabled={isLoading} // once click loading=true
                         className="w-full rounded-full bg-primary py-3 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
                     >
-                        {isLoading ? (isSignUp ? 'Signing up...' : 'Logging in...') : isSignUp ? 'Create Account' : 'Sign In'}
+                        {isLoading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
                     </button>
                 </form>
 
@@ -189,6 +160,6 @@ export default function LoginPage() {
                     ← Back to shop
                 </Link>
             </div>
-        </div>
-    )
+        </div >
+    );
 }

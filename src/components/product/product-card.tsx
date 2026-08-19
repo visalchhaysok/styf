@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/components/cart/cart-provider'
 import type { Product } from '@/lib/products'
-import { viewport } from '../../app/layout';
+import { viewport } from '@/app/layout';
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem, openCart } = useCart()

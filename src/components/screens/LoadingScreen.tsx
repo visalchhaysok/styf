@@ -13,10 +13,10 @@ export default function LoadingScreen() {
         setProgress(0)
 
         const milestones = [
-            { target: 24, delay: 200 },
+            { target: 24, delay: 300 },
             // { target: 50, delay: 500 },
-            { target: 66, delay: 200 },
-            { target: 100, delay: 600 },
+            { target: 66, delay: 300 },
+            { target: 100, delay: 800 },
         ]
 
         let current = 0
@@ -72,7 +72,8 @@ export default function LoadingScreen() {
             </span>
 
             <div className="mt-6 w-48">
-                <div className="h-0.5 w-full bg-[#e5e5e5] rounded-full overflow-hidden">
+                <div className="h-0.75 w-full bg-[#e5e5e5] rounded-full overflow-hidden">
+                    {/* original h-0.5 */}
                     <div
                         className="h-full bg-[#909090] transition-all duration-75 ease-out"
                         style={{ width: `${progress}%` }}

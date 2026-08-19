@@ -1,10 +1,10 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
-import { CartProvider } from '@/components/cart/cart-provider'
-import './globals.css'
-import LoadingScreen from '../components/screens/LoadingScreen';
-import AuthProvider from '../components/auth/auth-provider';
+import './globals.css';
+import LoadingScreen from '@/components/screens/LoadingScreen';
+import AuthProvider from '@/components/auth/auth-provider';
+import CartProvider from '@/components/cart/cart-provider';
 
 const inter = Inter({
   subsets: ['latin'],
