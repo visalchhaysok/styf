@@ -36,7 +36,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "next.config.mjs"
-  ],
+,     "src/app/api/checkout/route_backup.ts.md"  ],
   "exclude": [
     "node_modules"
   ]

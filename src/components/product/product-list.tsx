@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { ProductCard } from '@/components/product/product-card';
-import { getProducts, type Product } from '@/lib/products';
+import { useEffect, useState } from 'react'
+import { ProductCard } from '@/components/product/product-card'
+import { getProducts, type Product } from '@/lib/products'
 
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
-      const data = await getProducts();
-      setProducts(data);
-      setLoading(false);
+      const data = await getProducts()
+      setProducts(data)
+      setLoading(false)
     }
-    load();
-  }, []);
+    load()
+  }, [])
 
   if (loading) {
     return (
       <section className="mx-auto max-w-3xl px-5 py-6">
-        <p className="text-center text-muted-foreground">Fail to load, please refresh the page...</p>
+        <p className="text-center text-muted-foreground">Loading products..., please refresh in 3 minutes</p>
       </section>
     )
   }
@@ -30,7 +30,7 @@ export default function ProductList() {
       <section className="mx-auto max-w-3xl px-5 py-6">
         <p className="text-center text-muted-foreground">No products found.</p>
       </section>
-    );
+    )
   }
 
   return (

@@ -1,65 +1,95 @@
-'use client';
+'use client'
 
-import { createClient } from "@/lib/auth";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useAuth } from "@/components/auth/auth-provider"
+import { SignUpSchema } from "@/lib/schemas/validation/auth"
+import { createClient } from "@/lib/supabase/supabase"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
 
 export default function LoginPage() {
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
-    const [isSignUp, setIsSignUp] = useState<boolean>(false);
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const router = useRouter();
+    const { user, isLoading: authLoading } = useAuth()
+
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [isSignUp, setIsSignUp] = useState<boolean>(false)
+    const [error, setError] = useState('')
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const router = useRouter()
+
+    const supabase = useMemo(() => createClient(), [])
+
+    useEffect(() => {
+        setIsLoading(true)
+
+        if (authLoading) {
+            console.warn(`Loading user content...`)
+            return
+        }
+
+        if (user) {
+            setIsLoading(false)
+            router.push('/dashboard')
+            return
+        }
+
+        setIsLoading(false)
+        return
+
+    }, [authLoading])
 
     const handleSubmit = async (e: React.SubmitEvent) => {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
-        // while form is running show loading page
-
-        const supabase = createClient();
+        e.preventDefault()
+        setError('')
+        setIsLoading(true)
 
         try {
-            if (isSignUp) {
-                // isSignUp was set up for button ui
-                // not anything special
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: { username },
-                    },
-                });
+            const result = SignUpSchema.safeParse({
+                username,
+                email,
+                password,
+            })
 
-                if (error) throw error;
-                // => fires signUp and logIn on immediately after
+            if (!result.success) {
+                setError(result.error.message)
+                return
+            }
+
+            if (isSignUp) {
+                const { error } = await supabase.auth.signUp({
+                    email: result.data.email,
+                    password: result.data.password,
+                    options: {
+                        data: { username: result.data.username },
+                    },
+                })
+
+                if (error) throw error
                 const { error: signInError } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
-                if (signInError) throw signInError;
+                    email: result.data.email,
+                    password: result.data.password,
+                })
+                if (signInError) throw signInError
 
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
-                });
-                if (error) throw error;
+                })
+                if (error) throw error
             }
-            router.push('/');
-            router.refresh();
+            router.push('/')
+            router.refresh()
         }
 
         catch (error: any) {
-            setError(error.message || 'Something went wrong');
+            setError(error.message || 'Something went wrong')
         }
 
         finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     }
 
@@ -130,10 +160,10 @@ export default function LoginPage() {
 
                     <button
                         type="submit"
-                        disabled={isLoading} // once click loading=true
+                        disabled={isLoading}
                         className="w-full rounded-full bg-primary py-3 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
                     >
-                        {isLoading ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In'}
+                        {isLoading ? (isSignUp ? 'Signing up...' : 'Logging in...') : isSignUp ? 'Create Account' : 'Sign In'}
                     </button>
                 </form>
 
@@ -142,7 +172,7 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => {
-                            setIsSignUp(!isSignUp) // this is how the flow changes
+                            setIsSignUp(!isSignUp)
                             setError('')
                         }}
                         className="text-foreground underline hover:text-primary"
@@ -159,5 +189,5 @@ export default function LoginPage() {
                 </Link>
             </div>
         </div>
-    );
+    )
 }

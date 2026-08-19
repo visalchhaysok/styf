@@ -39,9 +39,6 @@ export function ProductDetail({ product }: { product: Product }) {
 
       <div className="mt-8 flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          {/* <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            {product.category}
-          </span> */}
           <h1 className="font-serif text-3xl text-foreground">{product.name}</h1>
           <p className="text-xl text-muted-foreground">${product.price.toLocaleString()}</p>
         </div>
@@ -59,11 +56,10 @@ export function ProductDetail({ product }: { product: Product }) {
                 type="button"
                 onClick={() => setSize(s)}
                 aria-pressed={size === s}
-                className={`min-w-12 rounded-full border px-4 py-2 text-sm transition-colors ${
-                  size === s
+                className={`min-w-12 rounded-full border px-4 py-2 text-sm transition-colors ${size === s
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-border bg-transparent text-foreground hover:border-primary'
-                }`}
+                  }`}
               >
                 {s}
               </button>

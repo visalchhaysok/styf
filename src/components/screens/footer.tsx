@@ -7,7 +7,6 @@ export function Footer() {
         <p className="font-serif text-2xl font-bold tracking-[0.2em] text-foreground">STYF</p>
         <p className="mt-2 text-sm text-muted-foreground">Effortless Style — Stylish Flow</p>
 
-        {/* Text links only: About + Contact */}
         <nav className="mt-8 flex items-center justify-center gap-x-6">
           <Link
             href="/about"
@@ -23,9 +22,7 @@ export function Footer() {
           </Link>
         </nav>
 
-        {/* Social icons */}
         <div className="mt-6 flex items-center justify-center gap-5">
-          {/* Instagram */}
           <a
             href="https://instagram.com"
             target="_blank"
@@ -40,7 +37,6 @@ export function Footer() {
             </svg>
           </a>
 
-          {/* Facebook */}
           <a
             href="https://facebook.com"
             target="_blank"
@@ -53,7 +49,6 @@ export function Footer() {
             </svg>
           </a>
 
-          {/* TikTok */}
           <a
             href="https://tiktok.com"
             target="_blank"
@@ -66,7 +61,6 @@ export function Footer() {
             </svg>
           </a>
 
-          {/* Email */}
           <a
             href="mailto:hello@styf.com"
             className="text-muted-foreground transition hover:text-foreground"

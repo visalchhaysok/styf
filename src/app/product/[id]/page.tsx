@@ -7,7 +7,7 @@ import { getProduct, getProducts, Product } from '@/lib/products'
 
 export async function generateStaticParams() {
 
-  const products = await getProducts();
+  const products = await getProducts()
   return products.map((p) => ({ id: p.id }))
 }
 

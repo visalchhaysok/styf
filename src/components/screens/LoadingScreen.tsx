@@ -13,10 +13,9 @@ export default function LoadingScreen() {
         setProgress(0)
 
         const milestones = [
-            { target: 24, delay: 200 },
-            // { target: 50, delay: 500 },
-            { target: 66, delay: 200 },
-            { target: 100, delay: 600 },
+            { target: 24, delay: 300 },
+            { target: 66, delay: 300 },
+            { target: 100, delay: 800 },
         ]
 
         let current = 0
@@ -24,7 +23,6 @@ export default function LoadingScreen() {
 
         const runMilestone = (index: number) => {
             if (index >= milestones.length) {
-                // All done, fade out
                 timeoutId = setTimeout(() => setVisible(false), 200)
                 return
             }
@@ -32,7 +30,7 @@ export default function LoadingScreen() {
             const { target, delay } = milestones[index]
             const start = current
             const diff = target - start
-            const steps = 20 // smooth steps between milestones
+            const steps = 20
             const stepDuration = delay / steps
             let step = 0
 
@@ -46,13 +44,11 @@ export default function LoadingScreen() {
                     clearInterval(interval)
                     current = target
                     setProgress(target)
-                    // Pause, then next milestone
                     timeoutId = setTimeout(() => runMilestone(index + 1), 150)
                 }
             }, stepDuration)
         }
 
-        // Small initial delay before starting
         timeoutId = setTimeout(() => runMilestone(0), 100)
 
         return () => {
@@ -72,7 +68,7 @@ export default function LoadingScreen() {
             </span>
 
             <div className="mt-6 w-48">
-                <div className="h-0.5 w-full bg-[#e5e5e5] rounded-full overflow-hidden">
+                <div className="h-0.75 w-full bg-[#e5e5e5] rounded-full overflow-hidden">
                     <div
                         className="h-full bg-[#909090] transition-all duration-75 ease-out"
                         style={{ width: `${progress}%` }}
@@ -87,7 +83,6 @@ export default function LoadingScreen() {
     )
 }
 
-// Smooth easing — starts fast, slows as it approaches target
 function easeOutCubic(x: number): number {
     return 1 - Math.pow(1 - x, 3)
 }
