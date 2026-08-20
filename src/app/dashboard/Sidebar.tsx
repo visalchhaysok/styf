@@ -1,4 +1,4 @@
-import { LogOut, Settings, X } from "lucide-react"
+import { LogOut, Settings, Store, X } from "lucide-react"
 import Image from "next/image"
 
 import {
@@ -9,7 +9,7 @@ import {
     CreditCard,
 } from "lucide-react"
 import { useAuth } from "@/components/auth/auth-provider"
-import { metadata } from '../../layout'
+import { useRouter } from "next/navigation"
 
 const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, active: true },
@@ -28,6 +28,7 @@ export default function Sidebar({
 }) {
 
     const { user, signOut } = useAuth()
+    const router = useRouter()
 
     return (
         <>
@@ -40,34 +41,42 @@ export default function Sidebar({
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-40 flex w-71.5 flex-col bg-[#26231f] px-5 py-6 text-[#eee8df] transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"
-                    }`}
+                className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-[#26231f] px-5 py-6 text-[#eee8df] transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
             >
                 <div className="mb-10 flex items-start justify-between px-2">
-                    <div className="flex items-center gap-3">
+                    <div className="min-w-0 flex items-center gap-3">
                         <Image
-                            src="/hero.png"
+                            src="/user-icon.png"
                             alt="Profile Picture"
                             width={44}
                             height={44}
                             className="size-11 rounded-full object-cover object-top ring-2 ring-[#b8a990]"
                         />
 
-                        <div>
-                            <p className="text-base font-medium">{user?.user_metadata.username || user?.email!.split('@')[0] || 'Guest'}</p>
-                            <p className="mt-1 text-xs text-[#a8a094]">
-                                {user?.email || 'guest@email.com'}
+                        <div className="min-w-0 max-w-37.5">
+                            <p className="truncate text-base font-medium">
+                                {user?.user_metadata.username ||
+                                    user?.email!.split("@")[0] ||
+                                    "Guest"}
+                            </p>
+
+                            <p className="mt-1 truncate text-xs text-[#a8a094]">
+                                {user?.email || "guest@email.com"}
                             </p>
                         </div>
                     </div>
 
-                    <button
-                        onClick={onClose}
-                        className="rounded-md p-1 text-[#a8a094] hover:text-white lg:hidden"
-                        aria-label="Close sidebar"
-                    >
-                        <X size={18} />
-                    </button>
+                    {/* <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => router.push("/")}
+                            className="rounded-lg border border-white bg-white p-2 text-black hover:bg-[#eee8df]"
+                            aria-label="Back to shop"
+                            title="Back to shop"
+                        >
+                            <Store size={17} strokeWidth={1.7} />
+                        </button>
+                    </div> */}
+
                 </div>
 
                 <nav

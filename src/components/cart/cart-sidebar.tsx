@@ -61,8 +61,6 @@ export function CartSidebar() {
         body: JSON.stringify({ cartId }),
       })
 
-      console.log('CartID (from sidebar):', cartId)
-
       const data = await res.json()
 
       if (!res.ok) {

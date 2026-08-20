@@ -66,7 +66,7 @@ export default function RecentOrders({
                                 onChange={(e) =>
                                     setQuery(e.target.value)
                                 }
-                                placeholder="Search"
+                                placeholder="Search by ID..."
                                 className="w-20 bg-transparent py-2 text-xs text-[#292621] outline-none placeholder:text-[#aaa095] sm:w-28"
                             />
                         </label>
@@ -146,13 +146,13 @@ export default function RecentOrders({
                                 className={`w-fit rounded-full px-2.5 py-1 text-[10px] font-semibold ${order.status ===
                                     "In transit" ||
                                     order.status === "Paid"
-                                    ? "bg-[#f2eadf] text-[#936f43]"
+                                    ? "bg-[#e5eee5] text-[#58725a]"
                                     : order.status ===
                                         "Cancelled" ||
                                         order.status ===
                                         "Failed"
                                         ? "bg-[#f2e5e5] text-[#8f5a5a]"
-                                        : "bg-[#e5eee5] text-[#58725a]"
+                                        : "bg-[#f2eadf] text-[#936f43]"
                                     }`}
                             >
                                 {order.status}

@@ -17,7 +17,7 @@ export function ProductDetail({ product }: { product: Product }) {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-5 py-8">
+    <section className="mx-auto max-w-2xl px-5 py-8">
       <Link
         href="/"
         className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -26,7 +26,7 @@ export function ProductDetail({ product }: { product: Product }) {
         Back to collection
       </Link>
 
-      <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl bg-muted">
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-muted">
         <Image
           src={product.image_url || '/placeholder.svg'}
           alt={product.name}
@@ -40,8 +40,8 @@ export function ProductDetail({ product }: { product: Product }) {
       <div className="mt-8 flex flex-col gap-6">
         <div className="flex flex-col gap-2">
 
-          <h1 className="font-serif text-3xl text-foreground">{product.name}</h1>
-          <p className="text-xl text-muted-foreground">${product.price.toLocaleString()}</p>
+          <h1 className="font-serif text-2xl text-foreground">{product.name}</h1>
+          <p className="text-base text-muted-foreground">${product.price.toLocaleString()}</p>
         </div>
 
         <p className="text-pretty leading-relaxed text-muted-foreground">

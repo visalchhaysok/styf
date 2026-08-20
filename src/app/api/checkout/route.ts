@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
             customer_email: user.email,
             metadata: {
                 user_id: user.id,
+                cart_id: cart.id,
             },
             line_items: cart.cart_items.map((item: DBCartItem) => ({
                 price_data: {
@@ -104,9 +105,6 @@ export async function POST(request: NextRequest) {
                 { status: 500 }
             )
         }
-
-        console.log('sessionId: ', stripeSession.id)
-        console.log('orderId created: ', orderId)
 
         return NextResponse.json(
             {

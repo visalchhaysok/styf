@@ -62,8 +62,6 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ received: true })
         }
 
-        console.log(`New Status:`, newStatus)
-
         const { error: updateError } = await supabaseAdmin
             .from('orders')
             .update({
@@ -81,6 +79,11 @@ export async function POST(request: NextRequest) {
                 { status: 500 }
             )
         }
+
+        await supabaseAdmin
+            .from('cart_items')
+            .delete()
+            .eq('cart_id', session.metadata?.cart_id)
 
         return NextResponse.json(
             { received: true },

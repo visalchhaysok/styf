@@ -13,7 +13,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/supabase"
 
-import Sidebar from "./components/Sidebar"
+// import Sidebar from "./components/Sidebar"
 import StatCard from "./components/StatCard"
 import SpendingOverview, { ChartData } from "./components/SpendingOverview"
 import RecentOrders from "./components/RecentOrders"
@@ -24,7 +24,7 @@ export default function DashboardPage() {
 
     const supabase = useMemo(() => createClient(), [])
 
-    const [sidebarOpen, setSidebarOpen] = useState(false)
+    // const [sidebarOpen, setSidebarOpen] = useState(false) //!deleted
     const [range, setRange] = useState("Last 30 days")
     const [query, setQuery] = useState("")
     const [sortField, setSortField] = useState<"date" | null>(null)
@@ -176,14 +176,14 @@ export default function DashboardPage() {
             id: order.id.slice(0, 8).toUpperCase(),
             fullId: order.id,
 
-            date: new Date(order.created_at).toLocaleDateString(
-                "en-US",
-                {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                }
-            ),
+            date: `${new Date(order.created_at).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+            })}, ${new Date(order.created_at).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+            })}`,
 
             created_at: order.created_at,
 
@@ -301,8 +301,8 @@ export default function DashboardPage() {
 
         return recentOrders.filter(
             (order) =>
-                order.item.toLowerCase().includes(query.toLowerCase()) ||
-                order.id.toLowerCase().includes(query.toLowerCase()),
+                order.item?.toLowerCase().includes(query.toLowerCase()) ||
+                order.id?.toLowerCase().includes(query.toLowerCase()),
         )
     }, [query, recentOrders])
 
@@ -346,109 +346,76 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8f6f2] text-[#292621] lg:flex">
-            <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="mx-auto max-w-7xl px-5 py-8 md:px-10 md:py-12 lg:px-12">
+            <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+                <div>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a8d7c]">
+                        {dateString}
+                    </p>
 
-            <main className="min-w-0 flex-1">
-                <header className="flex items-center justify-between border-b border-[#e5ded4] bg-[#f8f6f2]/90 px-5 py-5 backdrop-blur-sm md:px-10 lg:px-12">
-                    <button
-                        className="rounded-lg border border-[#e5ded4] p-2 lg:hidden"
-                        onClick={() => setSidebarOpen(true)}
-                        aria-label="Open navigation"
-                    >
-                        <Menu size={18} />
-                    </button>
+                    <h1 className="font-serif text-4xl tracking-tight md:text-5xl">
+                        Good {timeOfDay},{" "}
+                        {user?.user_metadata?.full_name ||
+                            user?.email?.split("@")[0] ||
+                            "there"}
+                    </h1>
 
-                    <div className="hidden items-center gap-3 text-sm text-[#8c8378] md:flex">
-                        <span>Account</span>
-
-                        <span>/</span>
-
-                        <span className="font-medium text-[#292621]">Dashboard</span>
-                    </div>
-
-                    <div className="ml-auto flex items-center gap-4">
-                        <button
-                            className="text-[#8c8378] hover:text-[#292621]"
-                            aria-label="Help"
-                        >
-                            <CircleHelp size={19} />
-                        </button>
-
-                        <div className="size-2 rounded-full bg-[#b8a990]" />
-                    </div>
-                </header>
-
-                <div className="mx-auto max-w-7xl px-5 py-8 md:px-10 md:py-12 lg:px-12">
-                    <div className="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-                        <div>
-                            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a8d7c]">
-                                {dateString}
-                            </p>
-
-                            <h1 className="font-serif text-4xl tracking-tight md:text-5xl">
-                                Good {timeOfDay},{" "}
-                                {user?.user_metadata?.full_name ||
-                                    user?.email?.split("@")[0] ||
-                                    "there"}
-                            </h1>
-
-                            <p className="mt-3 text-sm text-[#8c8378]">
-                                Here&apos;s the latest from your STYF account.
-                            </p>
-                        </div>
-
-                        <button className="flex w-fit items-center gap-2 rounded-lg border border-[#ded5c9] bg-[#fbfaf8] px-4 py-2.5 text-xs font-medium text-[#5f574d] shadow-sm">
-                            <SlidersHorizontal size={15} />
-                            Customize view
-                        </button>
-                    </div>
-
-                    <div className="grid gap-4 sm:grid-cols-3">
-                        <StatCard
-                            label="Total spent"
-                            value={`$${stats.totalSpent.toFixed(2)}`}
-                            change="+12.4%"
-                            tone="warm"
-                            isLoading={isLoading}
-                        />
-
-                        <StatCard
-                            label="Orders placed"
-                            value={stats.ordersCount}
-                            change="+2 this month"
-                            isLoading={isLoading}
-                        />
-
-                        <StatCard
-                            label="Items in cart"
-                            value={stats.cartItems}
-                            change={stats.cartItems > 0 ? "Ready to checkout" : undefined}
-                            isLoading={isLoading}
-                        />
-                    </div>
-
-                    <div className="mt-10 grid gap-5">
-                        <SpendingOverview
-                            range={range}
-                            setRange={setRange}
-                            chartData={chartData}
-                            isLoading={isLoading}
-                        />
-
-                        <RecentOrders
-                            hasOrders={hasOrders}
-                            isLoading={isLoading}
-                            query={query}
-                            setQuery={setQuery}
-                            handleSort={handleSort}
-                            getSortIcon={getSortIcon}
-                            sortedOrders={sortedOrders}
-                            onShopNow={() => router.push("/shop")}
-                        />
-                    </div>
+                    <p className="mt-3 text-sm text-[#8c8378]">
+                        Here&apos;s the latest from your STYF account.
+                    </p>
                 </div>
-            </main>
+
+                <button className="flex w-fit items-center gap-2 rounded-lg border border-[#ded5c9] bg-[#fbfaf8] px-4 py-2.5 text-xs font-medium text-[#5f574d] shadow-sm">
+                    <SlidersHorizontal size={15} />
+                    Customize view
+                </button>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+                <StatCard
+                    label="Total spent"
+                    value={`$${stats.totalSpent.toFixed(2)}`}
+                    change="+12.4%"
+                    tone="warm"
+                    isLoading={isLoading}
+                />
+
+                <StatCard
+                    label="Orders placed"
+                    value={stats.ordersCount}
+                    change="+2 this month"
+                    isLoading={isLoading}
+                />
+
+                <StatCard
+                    label="Items in cart"
+                    value={stats.cartItems}
+                    change={stats.cartItems > 0 ? "Ready to checkout" : undefined}
+                    isLoading={isLoading}
+                />
+            </div>
+
+            <div className="mt-10 grid gap-5">
+                <SpendingOverview
+                    range={range}
+                    setRange={setRange}
+                    chartData={chartData}
+                    isLoading={isLoading}
+                />
+
+                <RecentOrders
+                    hasOrders={hasOrders}
+                    isLoading={isLoading}
+                    query={query}
+                    setQuery={setQuery}
+                    handleSort={handleSort}
+                    getSortIcon={getSortIcon}
+                    sortedOrders={sortedOrders}
+                    onShopNow={() => router.push("/shop")}
+                />
+            </div>
         </div>
+        //     </main>
+        // </div>
     )
 }

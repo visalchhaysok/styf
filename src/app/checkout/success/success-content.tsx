@@ -40,7 +40,6 @@ export default function SuccessContent() {
                 setSessionId(sessionId)
                 setStatus('success')
                 setOrderStatus(orderStatus)
-                console.log(orderStatus)
                 return
 
             } catch (error) {
