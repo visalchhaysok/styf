@@ -7,7 +7,7 @@ export default function LoadingScreen() {
 
             <div className="mt-6 w-48 overflow-hidden">
                 <div className="h-1 w-full rounded-full bg-[#e5e5e5]">
-                    <div className="h-full w-1/3 animate-[loading_1.2s_ease-in-out_infinite] rounded-full bg-[#909090]" />
+                    <div className="h-full w-1/3 animate-[loading_1.2s_ease-in-out_infinite] rounded-full bg-[#10ad8b]" />
                 </div>
             </div>
         </div>

@@ -31,7 +31,7 @@ export default function LoginPage() {
 
         if (user) {
             setIsLoading(false)
-            router.push('/dashboard')
+            router.push('/account/dashboard')
             return
         }
 
@@ -67,7 +67,6 @@ export default function LoginPage() {
                 })
 
                 if (error) throw error
-                // => fires signUp and logIn on immediately after
                 const { error: signInError } = await supabase.auth.signInWithPassword({
                     email: result.data.email,
                     password: result.data.password,
@@ -81,7 +80,7 @@ export default function LoginPage() {
                 })
                 if (error) throw error
             }
-            router.push('/')
+            router.push('/account/dashboard')
             router.refresh()
         }
 
@@ -161,7 +160,7 @@ export default function LoginPage() {
 
                     <button
                         type="submit"
-                        disabled={isLoading} // once click loading=true
+                        disabled={isLoading}
                         className="w-full rounded-full bg-primary py-3 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40"
                     >
                         {isLoading ? (isSignUp ? 'Signing up...' : 'Logging in...') : isSignUp ? 'Create Account' : 'Sign In'}
@@ -173,7 +172,7 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => {
-                            setIsSignUp(!isSignUp) // this is how the flow changes
+                            setIsSignUp(!isSignUp)
                             setError('')
                         }}
                         className="text-foreground underline hover:text-primary"

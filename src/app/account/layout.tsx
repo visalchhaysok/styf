@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import Sidebar from "./Sidebar"
-import DashboardNavbar from "./DashboardNavbar"
+import Sidebar from "../../components/sidebar/Sidebar"
+import DashboardNavbar from "./AccountNavbar"
 
 export default function DashboardLayout({
     children,
@@ -22,7 +22,6 @@ export default function DashboardLayout({
                 <DashboardNavbar
                     onMenuClick={() => setSidebarOpen(true)}
                 />
-
                 {children}
             </main>
         </div>

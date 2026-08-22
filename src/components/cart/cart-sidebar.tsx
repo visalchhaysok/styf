@@ -1,13 +1,22 @@
-'use client'
+"use client"
 
-import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
-import { Minus, Plus, X } from 'lucide-react'
-import { useCart } from '@/components/cart/cart-provider'
-import { useRouter } from 'next/navigation'
+import Image from "next/image"
+import { useEffect, useRef, useState } from "react"
+import { ChevronRight, Minus, Plus, X } from "lucide-react"
+import { useCart } from "@/components/cart/cart-provider"
+import { useRouter } from "next/navigation"
 
 export function CartSidebar() {
-  const { user, cartId, items, subtotal, isOpen, closeCart, updateQuantity, removeItem } = useCart()
+  const {
+    user,
+    cartId,
+    items,
+    subtotal,
+    isOpen,
+    closeCart,
+    updateQuantity,
+    removeItem,
+  } = useCart()
   const [dragX, setDragX] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const startX = useRef<number | null>(null)
@@ -16,7 +25,7 @@ export function CartSidebar() {
   useEffect(() => {
     if (isOpen) {
       const original = document.body.style.overflow
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden"
       return () => {
         document.body.style.overflow = original
       }
@@ -26,10 +35,10 @@ export function CartSidebar() {
   useEffect(() => {
     if (!isOpen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeCart()
+      if (e.key === "Escape") closeCart()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
   }, [isOpen, closeCart])
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -55,23 +64,23 @@ export function CartSidebar() {
     setIsLoading(true)
 
     try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cartId }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Checkout failed')
+        throw new Error(data.error || "Checkout failed")
       }
 
       if (data.url) {
         window.location.href = data.url
       }
     } catch (err: any) {
-      alert(err.message || 'Something went wrong. Try again.')
+      alert(err.message || "Something went wrong. Try again.")
     } finally {
       setIsLoading(false)
     }
@@ -79,14 +88,14 @@ export function CartSidebar() {
 
   return (
     <div
-      className={`fixed inset-0 z-50 ${isOpen ? '' : 'pointer-events-none'}`}
+      className={`fixed inset-0 z-50 ${isOpen ? "" : "pointer-events-none"}`}
       aria-hidden={!isOpen}
     >
       <button
         type="button"
         aria-label="Close cart"
         onClick={closeCart}
-        className={`absolute inset-0 h-full w-full bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
+        className={`absolute inset-0 h-full w-full bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"
           }`}
       />
 
@@ -97,29 +106,31 @@ export function CartSidebar() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         style={{
-          transform: isOpen
-            ? `translateX(${dragX}px)`
-            : 'translateX(100%)',
-          transition: dragX === 0 ? 'transform 300ms ease' : 'none',
+          transform: isOpen ? `translateX(${dragX}px)` : "translateX(100%)",
+          transition: dragX === 0 ? "transform 300ms ease" : "none",
         }}
         className="absolute right-0 top-0 flex h-full w-4/5 max-w-sm flex-col bg-sidebar shadow-2xl"
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <h2 className="font-serif text-xl font-semibold text-foreground">Your Cart</h2>
+          <h2 className="font-serif text-xl font-semibold text-foreground">
+            Your Cart
+          </h2>
           <button
             type="button"
             onClick={closeCart}
             aria-label="Close cart"
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
-            <X className="size-5" />
+            <ChevronRight className="size-5" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5">
           {items.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-2 py-16 text-center">
-              <p className="font-serif text-lg text-foreground">Your cart is empty</p>
+              <p className="font-serif text-lg text-foreground">
+                Your cart is empty
+              </p>
               <p className="text-sm text-muted-foreground">
                 Add a piece to begin your edit.
               </p>
@@ -127,10 +138,13 @@ export function CartSidebar() {
           ) : (
             <ul className="divide-y divide-border">
               {items.map((item) => (
-                <li key={`${item.id}-${item.productId}-${item.size}`} className="flex gap-4 py-5">
+                <li
+                  key={`${item.id}-${item.productId}-${item.size}`}
+                  className="flex gap-4 py-5"
+                >
                   <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-muted">
                     <Image
-                      src={item.image || '/placeholder.svg'}
+                      src={item.image || "/placeholder.svg"}
                       alt={item.name}
                       fill
                       sizes="80px"
@@ -144,7 +158,9 @@ export function CartSidebar() {
                         <p className="truncate text-sm font-medium text-foreground">
                           {item.name}
                         </p>
-                        <p className="text-xs text-muted-foreground">Size {item.size}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Size {item.size}
+                        </p>
                       </div>
                       <button
                         type="button"
@@ -152,7 +168,17 @@ export function CartSidebar() {
                         aria-label={`Remove ${item.name}`}
                         className="text-muted-foreground transition-colors hover:text-foreground"
                       >
-                        <svg color="#dc4563" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          color="#dc4563"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="3 6 5 6 21 6" />
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                           <line x1="10" y1="11" x2="10" y2="17" />
@@ -166,7 +192,11 @@ export function CartSidebar() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateQuantity(item.productId, item.size, item.quantity - 1)
+                            updateQuantity(
+                              item.productId,
+                              item.size,
+                              item.quantity - 1,
+                            )
                           }
                           aria-label="Decrease quantity"
                           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -179,7 +209,11 @@ export function CartSidebar() {
                         <button
                           type="button"
                           onClick={() =>
-                            updateQuantity(item.productId, item.size, item.quantity + 1)
+                            updateQuantity(
+                              item.productId,
+                              item.size,
+                              item.quantity + 1,
+                            )
                           }
                           aria-label="Increase quantity"
                           className="text-muted-foreground transition-colors hover:text-foreground"
@@ -198,11 +232,32 @@ export function CartSidebar() {
           )}
         </div>
 
-        <div className="border-t border-border bg-sidebar px-5 pb-6 pt-4">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Subtotal:</span>
-            <span className="font-serif text-lg text-foreground">
-              ${subtotal.toLocaleString()}
+        <div className="border-b border-border mb-5 flex items-center justify-between px-4 py-2">
+          <span className="font-serif text-xl font-medium text-foreground">
+            Total:
+          </span>
+
+          <span className="font-serif text-2xl font-medium text-foreground">
+            ${subtotal.toLocaleString()}
+          </span>
+        </div>
+
+        <div className="px-5 pb-6">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="rounded-md bg-[#1a1f71] px-2 py-1 text-[9px] font-bold text-white">
+              VISA
+            </span>
+
+            <span className="rounded-md bg-[#eb001b] px-2 py-1 text-[9px] font-bold text-white">
+              Mastercard
+            </span>
+
+            <span className="rounded-md bg-[#e9f5ff] px-2 py-1 text-[9px] font-bold text-[#1677c8]">
+              ABA
+            </span>
+
+            <span className="rounded-md bg-[#995ab4] px-2 py-1 text-[9px] font-bold text-[#f4f5f5]">
+              Stripe
             </span>
           </div>
 
@@ -210,22 +265,37 @@ export function CartSidebar() {
             type="button"
             onClick={() => {
               if (!user) {
-                router.push('/login')
+                router.push("/login")
               } else {
                 handleCheckout()
               }
             }}
             disabled={items.length === 0 || isLoading}
-            className="w-full flex items-center justify-center gap-2 rounded-full bg-primary py-4 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="bg-[#0d1b47] w-full flex items-center justify-center gap-2 rounded-full py-4 text-sm font-medium uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             aria-busy={isLoading}
           >
             {isLoading && (
-              <svg className="animate-spin h-5 w-5 text-current" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              <svg
+                className="animate-spin h-5 w-5 text-current"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
             )}
-            {isLoading ? 'Processing...' : 'Place Order'}
+            {isLoading ? "Processing..." : "Place Order"}
           </button>
         </div>
       </aside>
