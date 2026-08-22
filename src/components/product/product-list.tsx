@@ -19,9 +19,8 @@ export default function ProductList() {
 
   if (loading) {
     return (
-
       <section className="mx-auto max-w-3xl px-5 py-6">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid gap-8 grid-cols-2">
           {[1, 2].map((card) => (
             <article
               key={card}
@@ -29,22 +28,19 @@ export default function ProductList() {
             >
               {/* Image */}
               <div className="relative aspect-4/5 w-full overflow-hidden bg-[#d6d3ce]">
-                <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
+                <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-linear-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
               </div>
 
               {/* Content */}
               <div className="flex flex-col gap-4 p-6">
                 <div className="relative h-6 w-2/3 overflow-hidden rounded bg-[#d6d3ce]">
-                  <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
+                  <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-linear-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
                 </div>
 
                 <div className="relative h-5 w-1/3 overflow-hidden rounded bg-[#d6d3ce]">
-                  <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
+                  <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-linear-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
                 </div>
 
-                <div className="relative mt-2 h-12 w-full overflow-hidden rounded-full bg-[#d6d3ce]">
-                  <div className="absolute inset-0 animate-[shimmer_1.4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-[#f5f3ef]/70 to-transparent" />
-                </div>
               </div>
             </article>
           ))}

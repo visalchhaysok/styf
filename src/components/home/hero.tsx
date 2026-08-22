@@ -1,10 +1,16 @@
+'use client'
+
 import Image from 'next/image'
+import { useAuth } from '../auth/auth-provider'
 
 export function Hero() {
+
+  const { user } = useAuth()
+
   return (
     <section className="mx-auto max-w-3xl px-5 pb-6 pt-8 text-center md:pb-6 md:pt-12">
       <p className="mb-4 text-xs uppercase tracking-[0.35em] text-muted-foreground md:mb-6">
-        Stylish Flow
+        {user ? `Welcome, ${user.user_metadata?.username}` : "Stylish Flow"}
       </p>
 
       <h1 className="text-balance font-serif text-4xl font-medium leading-[1.05] tracking-tight text-foreground md:text-5xl">

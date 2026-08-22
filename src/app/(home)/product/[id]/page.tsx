@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { Navbar } from '@/components/screens/navbar'
-import { Footer } from '@/components/screens/footer'
+import { Navbar } from '@/components/home/navbar'
+import { Footer } from '@/components/home/footer'
 import { ProductDetail } from '@/components/product/product-detail'
 import { getProduct, getProducts, Product } from '@/lib/products'
 
@@ -37,7 +37,7 @@ export default async function ProductPage({
 
   return (
     <main className="min-h-dvh bg-background">
-      <Navbar />
+      {/* <Navbar /> */}
       <ProductDetail product={product} />
       <Footer />
     </main>
