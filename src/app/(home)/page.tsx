@@ -1,13 +1,12 @@
-import { Navbar } from '@/components/screens/navbar'
-import { Hero } from '@/components/screens/hero'
+import { Navbar } from '@/components/home/navbar'
+import { Hero } from '@/components/home/hero'
 import ProductList from '@/components/product/product-list'
-import { Footer } from '@/components/screens/footer'
+import { Footer } from '@/components/home/footer'
 
 export default function HomePage() {
 
   return (
     <main className="min-h-dvh bg-background">
-      <Navbar />
       <Hero />
       <ProductList />
       <Footer />
