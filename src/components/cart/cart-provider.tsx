@@ -227,94 +227,93 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 
     }, [user, authLoading, supabase])
 
-    const addItem = useCallback(
-        async (product: Product, size: string) => {
-            if (!cartId) {
-                console.warn("Warning: Cart not loaded")
-                return
-            }
+    const addItem = useCallback(async (product: Product, size: string) => {
+        if (!cartId) {
+            console.warn("Warning: Cart not loaded")
+            return
+        }
 
-            setError(null)
+        setError(null)
 
-            try {
-                const { data: existingItem, error: errorFetchItem } = await supabase
+        try {
+            const { data: existingItem, error: errorFetchItem } = await supabase
+                .from("cart_items")
+                .select("id, quantity")
+                .eq("cart_id", cartId)
+                .eq("product_id", product.id)
+                .eq("size", size)
+                .maybeSingle()
+
+            if (errorFetchItem) throw errorFetchItem
+
+            if (existingItem) {
+                const { data: updatedItem, error: updateError } = await supabase
                     .from("cart_items")
-                    .select("id, quantity")
-                    .eq("cart_id", cartId)
-                    .eq("product_id", product.id)
-                    .eq("size", size)
+                    .update({ quantity: existingItem.quantity + 1 })
+                    .eq("id", existingItem.id)
+                    .select("*, products(id, name, price, image_url)")
+                    .single()
+
+                if (updateError) throw updateError
+
+                const mappedUpdatedItem = mapToCartItem(updatedItem)
+                setItems((prev) =>
+                    prev.map((item) =>
+                        item.id === mappedUpdatedItem.id
+                            ? { ...item, quantity: mappedUpdatedItem.quantity }
+                            : item,
+                    ),
+                )
+                return
+
+            } else {
+                const { data: newCartItem, error: insertError } = await supabase
+                    .from("cart_items")
+                    .insert({
+                        cart_id: cartId,
+                        product_id: product.id,
+                        size,
+                        quantity: 1,
+                    })
+                    .select("*, products(id, name, price, image_url)")
                     .maybeSingle()
 
-                if (errorFetchItem) throw errorFetchItem
+                if (insertError) throw insertError
 
-                if (existingItem) {
-                    const { data: updatedItem, error: updateError } = await supabase
-                        .from("cart_items")
-                        .update({ quantity: existingItem.quantity + 1 })
-                        .eq("id", existingItem.id)
-                        .select("*, products(id, name, price, image_url)")
-                        .single()
+                const mappedItem = mapToCartItem(newCartItem)
 
-                    if (updateError) throw updateError
-
-                    const mappedUpdatedItem = mapToCartItem(updatedItem)
-                    setItems((prev) =>
-                        prev.map((item) =>
-                            item.id === mappedUpdatedItem.id
-                                ? { ...item, quantity: mappedUpdatedItem.quantity }
-                                : item,
-                        ),
-                    )
-                    return
-
-                } else {
-                    const { data: newCartItem, error: insertError } = await supabase
-                        .from("cart_items")
-                        .insert({
-                            cart_id: cartId,
-                            product_id: product.id,
-                            size,
-                            quantity: 1,
-                        })
-                        .select("*, products(id, name, price, image_url)")
-                        .maybeSingle()
-
-                    if (insertError) throw insertError
-
-                    const mappedItem = mapToCartItem(newCartItem)
-
-                    setItems((prev) => [...prev, mappedItem])
-                    return
-                }
-            } catch (error) {
-                console.error(`Line 204 Error: `, error)
-                setError(`Failed to addItem: ${error}`)
-
-                try {
-                    const { data, error: refreshCartError } = await supabase
-                        .from("carts")
-                        .select("cart_items(*, products(id, name, price, image_url))")
-                        .eq("id", cartId)
-                        .maybeSingle()
-
-                    if (refreshCartError) {
-                        console.error("Cart failed to load:", refreshCartError.message)
-                        throw refreshCartError
-                    }
-
-                    setItems(mapToCartItemsList(data?.cart_items) || [])
-                    return
-
-                } catch (refreshCartError) {
-                    setError(`Failed to reload Cart, please retry: ${refreshCartError}`)
-                    console.error("Line 223 error: ", refreshCartError)
-                    return
-                } finally {
-                    console.log(`New Cart:`, items)
-                    return
-                }
+                setItems((prev) => [...prev, mappedItem])
+                return
             }
-        },
+        } catch (error) {
+            console.error(`Line 204 Error: `, error)
+            setError(`Failed to addItem: ${error}`)
+
+            try {
+                const { data, error: refreshCartError } = await supabase
+                    .from("carts")
+                    .select("cart_items(*, products(id, name, price, image_url))")
+                    .eq("id", cartId)
+                    .maybeSingle()
+
+                if (refreshCartError) {
+                    console.error("Cart failed to load:", refreshCartError.message)
+                    throw refreshCartError
+                }
+
+                setItems(mapToCartItemsList(data?.cart_items) || [])
+                return
+
+            } catch (refreshCartError) {
+                setError(`Failed to reload Cart, please retry: ${refreshCartError}`)
+                console.error("Line 223 error: ", refreshCartError)
+                return
+            } finally {
+                console.log(`New Cart:`, items)
+                return
+            }
+        }
+    },
         [cartId, supabase],
     )
 

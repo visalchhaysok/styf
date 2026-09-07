@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { ArrowLeft, ChevronLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { useCart } from '@/components/cart/cart-provider'
 import type { Product } from '@/lib/products'
 
@@ -17,7 +17,8 @@ export function ProductDetail({ product }: { product: Product }) {
   }
 
   return (
-    <section className="mx-auto max-w-2xl px-5 py-8">
+    // <section className="mx-auto max-w-2xl px-5 py-8">
+    <section className="mx-auto max-w-2xl px-5 py-5">
       <Link
         href="/"
         className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -26,30 +27,32 @@ export function ProductDetail({ product }: { product: Product }) {
         Back to collection
       </Link>
 
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-muted">
+      <div className="relative aspect-4/5 w-full overflow-hidden rounded-2xl bg-muted">
         <Image
           src={product.image_url || '/placeholder.svg'}
           alt={product.name}
           fill
           priority
           sizes="(max-width: 768px) 100vw, 768px"
-          className="object-cover"
+          // className="object-cover" //! Updated
+          className="object-center"
         />
       </div>
 
-      <div className="mt-8 flex flex-col gap-6">
+      <div className="mt-6 flex flex-col gap-6">
         <div className="flex flex-col gap-2">
 
           <h1 className="font-serif text-2xl text-foreground">{product.name}</h1>
-          <p className="text-base text-muted-foreground">${product.price.toLocaleString()}</p>
+          <p className="text-xl text-muted-foreground">${product.price.toLocaleString()}</p>
+          {/* Updated text-base -> text-xl */}
         </div>
 
         <p className="text-pretty leading-relaxed text-muted-foreground">
           {product.description}
         </p>
 
-        <div className="flex flex-col gap-3">
-          <span className="text-sm font-medium text-foreground">Select Size:</span>
+        <div className="flex flex-col gap-4 md:gap-4">
+          <span className="text-base font-medium text-foreground">Select Size:</span>
           <div className="flex flex-wrap gap-2">
             {product.sizes.map((s) => (
               <button

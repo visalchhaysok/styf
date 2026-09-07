@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/supabase"
+
 export type Product = {
   id: string
   name: string

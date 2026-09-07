@@ -201,7 +201,7 @@ export function CartSidebar() {
                           aria-label="Decrease quantity"
                           className="text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          <Minus className="size-3.5" />
+                          <Minus className="size-3.5 active:bg-red-600" />
                         </button>
                         <span className="w-4 text-center text-sm tabular-nums text-foreground">
                           {item.quantity}
@@ -218,7 +218,7 @@ export function CartSidebar() {
                           aria-label="Increase quantity"
                           className="text-muted-foreground transition-colors hover:text-foreground"
                         >
-                          <Plus className="size-3.5" />
+                          <Plus className="size-3.5 active:bg-green-500" />
                         </button>
                       </div>
                       <p className="text-sm text-foreground">

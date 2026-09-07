@@ -52,7 +52,7 @@ export default function ProductList() {
   if (products.length === 0) {
     return (
       <section className="mx-auto max-w-3xl px-5 py-6">
-        <p className="text-center text-muted-foreground">No products found.</p>
+        <p className="text-center text-muted-foreground">No products found. Refresh the page</p>
       </section>
     )
   }

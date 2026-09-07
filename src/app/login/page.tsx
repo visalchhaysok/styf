@@ -1,60 +1,60 @@
-'use client'
+'use client';
 
-import { useAuth } from "@/components/auth/auth-provider"
-import { SignUpSchema } from "@/lib/schemas/validation/auth"
-import { createClient } from "@/lib/supabase/supabase"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
+import { useAuth } from "@/components/auth/auth-provider";
+import { SignUpSchema } from "@/lib/schemas/validation/auth";
+import { createClient } from "@/lib/supabase/supabase";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 export default function LoginPage() {
 
-    const { user, isLoading: authLoading } = useAuth()
+    const { user, isLoading: authLoading } = useAuth();
 
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [isSignUp, setIsSignUp] = useState<boolean>(false)
-    const [error, setError] = useState('')
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const router = useRouter()
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSignUp, setIsSignUp] = useState<boolean>(false);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const router = useRouter();
 
-    const supabase = useMemo(() => createClient(), [])
+    const supabase = useMemo(() => createClient(), []);
 
     useEffect(() => {
-        setIsLoading(true)
+        setIsLoading(true);
 
         if (authLoading) {
-            console.warn(`Loading user content...`)
-            return
+            console.warn(`Loading user content...`);
+            return;
         }
 
         if (user) {
-            setIsLoading(false)
-            router.push('/account/dashboard')
-            return
+            setIsLoading(false);
+            router.push('/account/dashboard');
+            return;
         }
 
-        setIsLoading(false)
-        return
+        setIsLoading(false);
+        return;
 
-    }, [authLoading])
+    }, [authLoading]);
 
     const handleSubmit = async (e: React.SubmitEvent) => {
-        e.preventDefault()
-        setError('')
-        setIsLoading(true)
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
 
         try {
             const result = SignUpSchema.safeParse({
                 username,
                 email,
                 password,
-            })
+            });
 
             if (!result.success) {
-                setError(result.error.message)
-                return
+                setError(result.error.message);
+                return;
             }
 
             if (isSignUp) {
@@ -64,34 +64,34 @@ export default function LoginPage() {
                     options: {
                         data: { username: result.data.username },
                     },
-                })
+                });
 
-                if (error) throw error
+                if (error) throw error;
                 const { error: signInError } = await supabase.auth.signInWithPassword({
                     email: result.data.email,
                     password: result.data.password,
-                })
-                if (signInError) throw signInError
+                });
+                if (signInError) throw signInError;
 
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
-                })
-                if (error) throw error
+                });
+                if (error) throw error;
             }
-            router.push('/account/dashboard')
-            router.refresh()
+            router.push('/account/dashboard');
+            router.refresh();
         }
 
         catch (error: any) {
-            setError(error.message || 'Something went wrong')
+            setError(error.message || 'Something went wrong');
         }
 
         finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center px-5">
@@ -172,8 +172,8 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={() => {
-                            setIsSignUp(!isSignUp)
-                            setError('')
+                            setIsSignUp(!isSignUp);
+                            setError('');
                         }}
                         className="text-foreground underline hover:text-primary"
                     >
@@ -189,5 +189,5 @@ export default function LoginPage() {
                 </Link>
             </div>
         </div>
-    )
+    );
 }

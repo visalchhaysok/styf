@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Sidebar from "@/components/sidebar/Sidebar"
 import { Navbar } from "@/components/home/navbar"
+import LoadingScreen from "@/components/ui/LoadingScreen"
 
 export default function HomeLayout({
     children,
@@ -13,6 +14,7 @@ export default function HomeLayout({
 
     return (
         <div>
+            <LoadingScreen />
             <Navbar
                 onMenuClick={() => setSidebarOpen(true)}
             />

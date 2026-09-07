@@ -2,7 +2,9 @@ import Link from 'next/link'
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-border">
+    // <footer className="mt-16 border-t border-border">
+    //! Changed: footer mt-16
+    <footer className = "mt-6 border-t border-border">
       <div className="mx-auto max-w-3xl px-5 py-12 text-center">
         <p className="font-serif text-2xl font-bold tracking-[0.2em] text-foreground">STYF</p>
         <p className="mt-2 text-sm text-muted-foreground">Effortless Style — Stylish Flow</p>

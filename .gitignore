@@ -45,4 +45,6 @@ next-env.d.ts
 
 CHANGES.md
 
-/.idea/
+/.idea
+
+/.vscode

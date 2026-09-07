@@ -17,14 +17,17 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
       <Link href={`/product/${product.id}`} className="block">
-        <div className="relative aspect-4/5 w-full overflow-hidden bg-muted">
+        {/* <div className="relative aspect-4/5 w-full overflow-hidden bg-muted"> */}
+        <div className="relative aspect-4/5 w-full overflow-hidden bg-muted"> 
+        {/* //! Update Image Aspect Ratio */}
           <Image
             loading="lazy"
             src={product.image_url || '/placeholder.svg'}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 50vw, 384px"
-            className="object-cover transition-transform duration-500 hover:scale-[1.03]"
+            // className="object-cover transition-transform duration-500 hover:scale-[1.03]" //! Image Fill
+            className="object-center transition-transform duration-500 hover:scale-[1.03]"
           />
         </div>
       </Link>
